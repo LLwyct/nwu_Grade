@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['C:\\Users\\liwen\\Desktop\\Grade_Search\\PrettyPrint.py', 'C:\\Users\\liwen\\Desktop\\Grade_Search\\xml_a.py', 'C:\\Users\\liwen\\Desktop\\Grade_Search\\xml_b.py', 'C:\\Users\\liwen\\Desktop\\Grade_Search'],
+             pathex=['C:\\Users\\liwen\\Desktop\\Grade_Search\\PrettyPrint.py', 'C:\\Users\\liwen\\Desktop\\Grade_Search\\xml_list.py', 'C:\\Users\\liwen\\Desktop\\Grade_Search'],
              binaries=[],
              datas=[],
              hiddenimports=[],

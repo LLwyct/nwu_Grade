@@ -1,49 +1,68 @@
+# coding: utf-8
 import requests
 from bs4 import BeautifulSoup
-from xml_a import XML as XML_a
-from xml_b import XML as XML_b
+from xml_list import xmls
 from PrettyPrint import prettyPrint
 
 input_username = '2015118130'
-input_password = '2015118130'
+
+headers = {
+
+    'preDo': {
+        'Host': '219.245.18.61',
+        'Content-Type': 'text/xml; charset=utf-8',
+        'Content-Length': 'length',
+        'SOAPAction': "http://murpcn.com/murpwebservice/loginverifystudent_B",
+    },
+
+    'getAllGrade': {
+        'Host': '219.245.18.61',
+        'Content-Type': 'text/xml; charset=utf-8',
+        'Content-Length': 'length',
+        'SOAPAction': 'http://murpcn.com/murpwebservice/GetMyGrades',
+    },
+
+    'getTermGrage': {
+        'Host': '219.245.18.61',
+        'Content-Type': 'text/xml; charset=utf-8',
+        'Content-Length': 'length',
+        'SOAPAction': 'http://murpcn.com/murpwebservice/Mark',
+    },
+}
+
+urls = {
+    'preDo': 'http://219.245.18.61:81/MURPWebService/MURPMainService.asmx',
+    'getAllGrade' : 'http://219.245.18.61:81/KEY/MURPNewsService.asmx',
+    'getTermGrage' : 'http://219.245.18.61:81/KEY/MURPNewsService.asmx',
+}
+
 
 if __name__ == '__main__':
 
+    # 第一步先查出关键信息
     input_username = input('学号:')
-
-    input_password = input_username
-
-    XML_a = XML_a.replace('2015118140', input_username)
-    XML_a = XML_a.replace('2015118140', input_password)
-
-    url_a = 'http://219.245.18.61:81/MURPWebService/MURPMainService.asmx'
-
-
-    # 第一次查询
-    header_a = {
-                'Host': '219.245.18.61',
-                'Content-Type': 'text/xml; charset=utf-8',
-                'Content-Length': 'length',
-                'SOAPAction': "http://murpcn.com/murpwebservice/loginverifystudent_B",
-    }
-
-    response = requests.post(url_a, headers=header_a, data=XML_a)
+    xml = xmls['preDo'].replace('2015118140', input_username)
+    # 向接口发出带有xml的post请求
+    response = requests.post(urls['preDo'], headers=headers['preDo'], data=xml)
+    # 用bs解析响应文本
     soup = BeautifulSoup(response.text, 'lxml')
-    _key = soup.umcid.string
+    # 得到关键信息
+    try:
+        _key = soup.umcid.string
+    except:
+        print('输入有误')
+        exit()
 
-    # 第二次查询
-    XML_b = XML_b.replace('80213', _key)
+    # 第二步再进行查询
+    p = input('1.历史成绩 2.学期成绩：')
+    querystring = ''
+    if p == '1':
+        querystring = 'getAllGrade'
+    elif p == '2':
+        querystring = 'getTermGrage'
 
-    url_b = 'http://219.245.18.61:81/KEY/MURPNewsService.asmx'
+    xml = xmls[querystring].replace('80213', _key)
+    response = requests.post(urls[querystring], headers=headers[querystring], data=xml)
+    prettyPrint(BeautifulSoup(response.text, 'lxml'), type=querystring)
 
-    header_b = {
-                'Host': '219.245.18.61',
-                'Content-Type': 'text/xml; charset=utf-8',
-                'Content-Length': 'length',
-                'SOAPAction': 'http://murpcn.com/murpwebservice/GetMyGrades',
-    }
-
-    response = requests.post(url_b, headers=header_b, data=XML_b)
-    soup = BeautifulSoup(response.text, 'lxml')
-    prettyPrint(soup)
     stop = input()
